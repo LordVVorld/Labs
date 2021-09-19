@@ -1,6 +1,6 @@
 ﻿namespace Labs
 {
-    partial class Form1
+    partial class Lab0
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -340,13 +340,13 @@
             this.heightCol.Name = "heightCol";
             this.heightCol.Width = 70;
             // 
-            // Form1
+            // Lab0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 459);
             this.Controls.Add(this.tabControl1);
-            this.Name = "Form1";
+            this.Name = "Lab0";
             this.Text = "Лаб0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
