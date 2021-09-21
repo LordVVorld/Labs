@@ -30,8 +30,6 @@ namespace Lab1
         private void InitializeComponent()
         {
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.lowerBorderBox = new System.Windows.Forms.TextBox();
             this.higherBorderBox = new System.Windows.Forms.TextBox();
             this.accurancyBox = new System.Windows.Forms.TextBox();
@@ -40,14 +38,19 @@ namespace Lab1
             this.higherBorderLabel = new System.Windows.Forms.Label();
             this.accurancyLabel = new System.Windows.Forms.Label();
             this.formulaeLabel = new System.Windows.Forms.Label();
-            this.minPointLabel = new System.Windows.Forms.Label();
-            this.minPointBox = new System.Windows.Forms.TextBox();
+            this.minPointsLabel = new System.Windows.Forms.Label();
             this.lab0Menu = new System.Windows.Forms.MenuStrip();
             this.launchButton = new System.Windows.Forms.ToolStripMenuItem();
             this.clearButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitButton = new System.Windows.Forms.ToolStripMenuItem();
             this.formulaeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.minPointsGrid = new System.Windows.Forms.DataGridView();
+            this.calculationNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.xCoord = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.yCoord = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lab0Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.formulaeChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minPointsGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // lowerBorderBox
@@ -114,28 +117,21 @@ namespace Lab1
             this.formulaeLabel.TabIndex = 7;
             this.formulaeLabel.Text = "Функция";
             // 
-            // minPointLabel
+            // minPointsLabel
             // 
-            this.minPointLabel.AutoSize = true;
-            this.minPointLabel.Location = new System.Drawing.Point(118, 209);
-            this.minPointLabel.Name = "minPointLabel";
-            this.minPointLabel.Size = new System.Drawing.Size(93, 13);
-            this.minPointLabel.TabIndex = 10;
-            this.minPointLabel.Text = "Точка минимума";
-            // 
-            // minPointBox
-            // 
-            this.minPointBox.Enabled = false;
-            this.minPointBox.Location = new System.Drawing.Point(12, 206);
-            this.minPointBox.Name = "minPointBox";
-            this.minPointBox.Size = new System.Drawing.Size(100, 20);
-            this.minPointBox.TabIndex = 9;
+            this.minPointsLabel.AutoSize = true;
+            this.minPointsLabel.Location = new System.Drawing.Point(61, 190);
+            this.minPointsLabel.Name = "minPointsLabel";
+            this.minPointsLabel.Size = new System.Drawing.Size(93, 13);
+            this.minPointsLabel.TabIndex = 10;
+            this.minPointsLabel.Text = "Точки минимума";
             // 
             // lab0Menu
             // 
             this.lab0Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.launchButton,
-            this.clearButton});
+            this.clearButton,
+            this.exitButton});
             this.lab0Menu.Location = new System.Drawing.Point(0, 0);
             this.lab0Menu.Name = "lab0Menu";
             this.lab0Menu.Size = new System.Drawing.Size(800, 24);
@@ -146,39 +142,74 @@ namespace Lab1
             this.launchButton.Name = "launchButton";
             this.launchButton.Size = new System.Drawing.Size(57, 20);
             this.launchButton.Text = "Запуск";
-            this.launchButton.Click += new System.EventHandler(this.launchButton_click);
+            this.launchButton.Click += new System.EventHandler(this.LaunchButton_click);
             // 
             // clearButton
             // 
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(65, 20);
             this.clearButton.Text = "Очистка";
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_click);
+            // 
+            // exitButton
+            // 
+            this.exitButton.Name = "exitButton";
+            this.exitButton.Size = new System.Drawing.Size(54, 20);
+            this.exitButton.Text = "Выход";
+            this.exitButton.Click += new System.EventHandler(this.ExitButton_click);
             // 
             // formulaeChart
             // 
             chartArea1.Name = "ChartArea1";
             this.formulaeChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.formulaeChart.Legends.Add(legend1);
             this.formulaeChart.Location = new System.Drawing.Point(215, 27);
             this.formulaeChart.Name = "formulaeChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.formulaeChart.Series.Add(series1);
-            this.formulaeChart.Size = new System.Drawing.Size(573, 300);
+            this.formulaeChart.Size = new System.Drawing.Size(573, 329);
             this.formulaeChart.TabIndex = 12;
             this.formulaeChart.Text = "chart1";
+            // 
+            // minPointsGrid
+            // 
+            this.minPointsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.minPointsGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.calculationNumber,
+            this.xCoord,
+            this.yCoord});
+            this.minPointsGrid.Location = new System.Drawing.Point(12, 206);
+            this.minPointsGrid.Name = "minPointsGrid";
+            this.minPointsGrid.RowHeadersVisible = false;
+            this.minPointsGrid.Size = new System.Drawing.Size(197, 150);
+            this.minPointsGrid.TabIndex = 13;
+            // 
+            // calculationNumber
+            // 
+            this.calculationNumber.HeaderText = "Линия №";
+            this.calculationNumber.Name = "calculationNumber";
+            this.calculationNumber.ReadOnly = true;
+            this.calculationNumber.Width = 50;
+            // 
+            // xCoord
+            // 
+            this.xCoord.HeaderText = "X";
+            this.xCoord.Name = "xCoord";
+            this.xCoord.ReadOnly = true;
+            this.xCoord.Width = 50;
+            // 
+            // yCoord
+            // 
+            this.yCoord.HeaderText = "Y";
+            this.yCoord.Name = "yCoord";
+            this.yCoord.ReadOnly = true;
+            this.yCoord.Width = 50;
             // 
             // lab1Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.minPointsGrid);
             this.Controls.Add(this.formulaeChart);
-            this.Controls.Add(this.minPointLabel);
-            this.Controls.Add(this.minPointBox);
+            this.Controls.Add(this.minPointsLabel);
             this.Controls.Add(this.formulaeLabel);
             this.Controls.Add(this.accurancyLabel);
             this.Controls.Add(this.higherBorderLabel);
@@ -194,6 +225,7 @@ namespace Lab1
             this.lab0Menu.ResumeLayout(false);
             this.lab0Menu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.formulaeChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minPointsGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -209,12 +241,16 @@ namespace Lab1
         private System.Windows.Forms.Label higherBorderLabel;
         private System.Windows.Forms.Label accurancyLabel;
         private System.Windows.Forms.Label formulaeLabel;
-        private System.Windows.Forms.Label minPointLabel;
-        private System.Windows.Forms.TextBox minPointBox;
+        private System.Windows.Forms.Label minPointsLabel;
         private System.Windows.Forms.MenuStrip lab0Menu;
         private System.Windows.Forms.ToolStripMenuItem launchButton;
         private System.Windows.Forms.ToolStripMenuItem clearButton;
         private System.Windows.Forms.DataVisualization.Charting.Chart formulaeChart;
+        private System.Windows.Forms.ToolStripMenuItem exitButton;
+        private System.Windows.Forms.DataGridView minPointsGrid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn calculationNumber;
+        private System.Windows.Forms.DataGridViewTextBoxColumn xCoord;
+        private System.Windows.Forms.DataGridViewTextBoxColumn yCoord;
     }
 }
 
