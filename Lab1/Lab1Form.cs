@@ -15,55 +15,37 @@ namespace Lab1
 
         private void LaunchButton_click(object sender, EventArgs e)
         {
-            int actualSeria = formulaeChart.Series.Count;
-            formulaeChart.Series.Add("Seria" + actualSeria.ToString());
-
-            var chartSeria = formulaeChart.Series[actualSeria].Points;
-            SortedDictionary<double, double> points = new SortedDictionary<double, double>();
-
             double.TryParse(lowerBorderBox.Text, out double lowerBorder);
             double.TryParse(higherBorderBox.Text, out double higherBorder);
             double.TryParse(accurancyBox.Text, out double accurancy);
             Expression formulae = Infix.ParseOrThrow(formulaeBox.Text);
-            formulaeChart.Legends.Add("График" + actualSeria.ToString());
 
-            Expression derivative = Calculus.Differentiate(Expression.Symbol("x"), formulae);
-            Dictionary<string, FloatingPoint> symbol = new Dictionary<string, FloatingPoint>()
-            {
-                { "x", lowerBorder }
-            };
+            var chartSeria = ChartDraw(lowerBorder, higherBorder, accurancy, formulae);
 
-            points.Add(lowerBorder, Evaluate.Evaluate(symbol, formulae).RealValue);
-
-            double lowerBorderDerivative = Evaluate.Evaluate(symbol, derivative).RealValue;
-            double center = (higherBorder + lowerBorder) / 2;
+            double minPoint = 0;
 
             while (higherBorder - lowerBorder >= accurancy)
             {
-                center = (higherBorder + lowerBorder) / 2;
-                symbol["x"] = center;
-                points.Add(center, Evaluate.Evaluate(symbol, formulae).RealValue);
-                double centerDerivative = Evaluate.Evaluate(symbol, derivative).RealValue;
+                double center = (higherBorder + lowerBorder) / 2;
+                double left = center - accurancy;
+                double right = center + accurancy;
 
-                if (lowerBorderDerivative * centerDerivative <= 0)
-                {
-                    higherBorder = center;
-                }
-                else
-                {
-                    lowerBorder = center;
-                }
+
+                    if (FuncValue(left, formulae) < FuncValue(right, formulae))
+                    {
+                        higherBorder = center;
+                    }
+                    else
+                    {
+                        lowerBorder = center;
+                    }
+
+
+                minPoint = center;
             }
-            minPointsGrid.Rows.Add(1);
-            int actualRow = minPointsGrid.Rows.Count - 2;
-            minPointsGrid.Rows[actualRow].Cells[0].Value = actualRow;
-            minPointsGrid.Rows[actualRow].Cells[1].Value = center;
-            minPointsGrid.Rows[actualRow].Cells[2].Value = points[center];
-            foreach (var point in points)
-            {
-                chartSeria.AddXY(point.Key, point.Value);
-            }
-            chartSeria.FindByValue(points[center]).Color = Color.Red;
+
+            GridUpload(minPoint, FuncValue(minPoint, formulae));
+            chartSeria.FindByValue(minPoint, "X").Color = Color.Red;
         }
 
         private void ClearButton_click(object sender, EventArgs e)
@@ -84,5 +66,37 @@ namespace Lab1
             this.Close();
         }
 
+        private System.Windows.Forms.DataVisualization.Charting.DataPointCollection ChartDraw(double start, double end, double step, Expression func)
+        {
+            int actualSeria = formulaeChart.Series.Count;
+            formulaeChart.Series.Add("Seria" + actualSeria.ToString()).ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            formulaeChart.Legends.Add("График" + actualSeria.ToString());
+            var chartSeria = formulaeChart.Series[actualSeria].Points;
+            while (start < end)
+            {
+                chartSeria.Add(start, FuncValue(start, func));
+                start += step / 2;
+            }
+            return chartSeria;
+        }
+
+        private double FuncValue(double point, Expression func)
+        {
+            Dictionary<string, FloatingPoint> symbol = new Dictionary<string, FloatingPoint>()
+            {
+                { "x", point }
+            };
+            return Evaluate.Evaluate(symbol, func).RealValue;
+        }
+
+        private void GridUpload(double minPointX, double minPointY)
+        {
+            minPointsGrid.Rows.Add(1);
+            int actualRow = minPointsGrid.Rows.Count - 2;
+
+            minPointsGrid.Rows[actualRow].Cells[0].Value = actualRow + 1;
+            minPointsGrid.Rows[actualRow].Cells[1].Value = minPointX;
+            minPointsGrid.Rows[actualRow].Cells[2].Value = minPointY;
+        }
     }
 }

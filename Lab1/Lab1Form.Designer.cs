@@ -134,7 +134,7 @@ namespace Lab1
             this.exitButton});
             this.lab0Menu.Location = new System.Drawing.Point(0, 0);
             this.lab0Menu.Name = "lab0Menu";
-            this.lab0Menu.Size = new System.Drawing.Size(800, 24);
+            this.lab0Menu.Size = new System.Drawing.Size(1073, 24);
             this.lab0Menu.TabIndex = 11;
             // 
             // launchButton
@@ -164,7 +164,7 @@ namespace Lab1
             this.formulaeChart.ChartAreas.Add(chartArea1);
             this.formulaeChart.Location = new System.Drawing.Point(215, 27);
             this.formulaeChart.Name = "formulaeChart";
-            this.formulaeChart.Size = new System.Drawing.Size(573, 329);
+            this.formulaeChart.Size = new System.Drawing.Size(846, 329);
             this.formulaeChart.TabIndex = 12;
             this.formulaeChart.Text = "chart1";
             // 
@@ -206,7 +206,7 @@ namespace Lab1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1073, 361);
             this.Controls.Add(this.minPointsGrid);
             this.Controls.Add(this.formulaeChart);
             this.Controls.Add(this.minPointsLabel);
