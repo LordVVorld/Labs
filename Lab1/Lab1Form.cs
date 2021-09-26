@@ -15,22 +15,28 @@ namespace Lab1
 
         private void LaunchButton_click(object sender, EventArgs e)
         {
-            double.TryParse(lowerBorderBox.Text, out double lowerBorder);
-            double.TryParse(higherBorderBox.Text, out double higherBorder);
-            double.TryParse(accurancyBox.Text, out double accurancy);
-            Expression formulae = Infix.ParseOrThrow(formulaeBox.Text);
-
-            var chartSeria = ChartDraw(lowerBorder, higherBorder, accurancy, formulae);
-
-            double minPoint = 0;
-
-            while (higherBorder - lowerBorder >= accurancy)
+            try
             {
-                double center = (higherBorder + lowerBorder) / 2;
-                double left = center - accurancy;
-                double right = center + accurancy;
+                double.TryParse(lowerBorderBox.Text, out double lowerBorder);
+                double.TryParse(higherBorderBox.Text, out double higherBorder);
+                double.TryParse(accurancyBox.Text, out double accurancy);
+                Expression formulae = Infix.ParseOrThrow(formulaeBox.Text);
 
+                int decimals = DecimalsCalc(accurancy);
+                var chartSeria = ChartDraw(lowerBorder, higherBorder, accurancy, formulae);
 
+                double minX = 0;
+
+                if (accurancy < 0)
+                {
+                    throw new Exception();
+                }
+
+                while (higherBorder - lowerBorder >= accurancy)
+                {
+                    double center = (higherBorder + lowerBorder) / 2;
+                    double left = center - accurancy;
+                    double right = center + accurancy;
                     if (FuncValue(left, formulae) < FuncValue(right, formulae))
                     {
                         higherBorder = center;
@@ -39,43 +45,69 @@ namespace Lab1
                     {
                         lowerBorder = center;
                     }
+                    minX = Math.Round(center, decimals);
+                }
+                double minY = Math.Round(FuncValue(minX, formulae), decimals);
+                GridUpload(minX, minY);
+                chartSeria.Points.FindByValue(minY).BorderWidth = 8;
+                chartSeria.Points.FindByValue(minY).Color = Color.Red;
+                chartSeria.Points.FindByValue(minY).Label = "min";
 
-
-                minPoint = center;
             }
-
-            GridUpload(minPoint, FuncValue(minPoint, formulae));
-            chartSeria.FindByValue(minPoint, "X").Color = Color.Red;
-        }
-
-        private void ClearButton_click(object sender, EventArgs e)
-        {
-            var chart = formulaeChart.Series[0].Points;
-            chart.Clear();
-            foreach (Control control in this.Controls)
+            catch
             {
-                if (control is TextBox)
+                foreach (Control control in this.Controls)
                 {
-                    control.Text.Remove(0);
+                    if ((control is TextBox) && control.Text.Length == 0)
+                    {
+                        MessageBox.Show("Нельзя оставлять поля пустыми.");
+                    }
+                }
+                if (double.Parse(lowerBorderBox.Text) >= double.Parse(higherBorderBox.Text))
+                {
+                    MessageBox.Show("Значение нижней границы больше значения верхней.");
+                }
+                if (double.Parse(accurancyBox.Text) < 0)
+                {
+                    MessageBox.Show("Значение точности меньше нуля.");
+                }
+                if (double.Parse(higherBorderBox.Text) - double.Parse(lowerBorderBox.Text) < double.Parse(accurancyBox.Text))
+                {
+                    MessageBox.Show("Значение точности больше длины отрезка.");
+                }
+                else
+                {
+                    MessageBox.Show("Некорректно задана вычисляемая функция");
                 }
             }
         }
 
-        private void ExitButton_click(object sender, EventArgs e)
+        private void ClearButton_click(object sender, EventArgs e)
         {
-            this.Close();
+            formulaeChart.Series.Clear();
+            foreach (Control control in this.Controls)
+            {
+                if (control is TextBox)
+                {
+                    control.Text = "";
+                }
+            }
+            minPointsGrid.Rows.Clear();
         }
 
-        private System.Windows.Forms.DataVisualization.Charting.DataPointCollection ChartDraw(double start, double end, double step, Expression func)
+        private System.Windows.Forms.DataVisualization.Charting.Series ChartDraw(double start, double end, double accurancy, Expression func)
         {
+            int decimals = DecimalsCalc(accurancy);
+            double step = ((end - start) / 10000 > accurancy) ? (end - start) / 10000 : accurancy;
             int actualSeria = formulaeChart.Series.Count;
             formulaeChart.Series.Add("Seria" + actualSeria.ToString()).ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            formulaeChart.Legends.Add("График" + actualSeria.ToString());
-            var chartSeria = formulaeChart.Series[actualSeria].Points;
+            var chartSeria = formulaeChart.Series[actualSeria];
+            formulaeChart.Series[actualSeria].BorderWidth = 4;
             while (start < end)
             {
-                chartSeria.Add(start, FuncValue(start, func));
-                start += step / 2;
+                double funcValue = Math.Round(FuncValue(start, func), decimals);
+                chartSeria.Points.AddXY(start, funcValue);
+                start = Math.Round(start + step, decimals);
             }
             return chartSeria;
         }
@@ -97,6 +129,33 @@ namespace Lab1
             minPointsGrid.Rows[actualRow].Cells[0].Value = actualRow + 1;
             minPointsGrid.Rows[actualRow].Cells[1].Value = minPointX;
             minPointsGrid.Rows[actualRow].Cells[2].Value = minPointY;
+        }
+
+        private void Params_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            if (char.IsDigit(e.KeyChar) || (e.KeyChar.Equals(',') && !textBox.Text.Contains(",")) || (e.KeyChar is (char)Keys.Back) || (textBox.Text.Length.Equals(0) && e.KeyChar.Equals('-')))
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+
+        private int DecimalsCalc(double accurancy)
+        {
+            int decimals = 0;
+            if (accurancy < 1)
+            {
+                while (accurancy < 1)
+                {
+                    decimals += 1;
+                    accurancy *= 10;
+                }
+            }
+            return decimals;
         }
     }
 }

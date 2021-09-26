@@ -42,7 +42,6 @@ namespace Lab1
             this.lab0Menu = new System.Windows.Forms.MenuStrip();
             this.launchButton = new System.Windows.Forms.ToolStripMenuItem();
             this.clearButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitButton = new System.Windows.Forms.ToolStripMenuItem();
             this.formulaeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.minPointsGrid = new System.Windows.Forms.DataGridView();
             this.calculationNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -59,6 +58,7 @@ namespace Lab1
             this.lowerBorderBox.Name = "lowerBorderBox";
             this.lowerBorderBox.Size = new System.Drawing.Size(100, 20);
             this.lowerBorderBox.TabIndex = 0;
+            this.lowerBorderBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Params_KeyPress);
             // 
             // higherBorderBox
             // 
@@ -66,6 +66,7 @@ namespace Lab1
             this.higherBorderBox.Name = "higherBorderBox";
             this.higherBorderBox.Size = new System.Drawing.Size(100, 20);
             this.higherBorderBox.TabIndex = 1;
+            this.higherBorderBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Params_KeyPress);
             // 
             // accurancyBox
             // 
@@ -73,6 +74,7 @@ namespace Lab1
             this.accurancyBox.Name = "accurancyBox";
             this.accurancyBox.Size = new System.Drawing.Size(100, 20);
             this.accurancyBox.TabIndex = 2;
+            this.accurancyBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Params_KeyPress);
             // 
             // formulaeBox
             // 
@@ -130,8 +132,7 @@ namespace Lab1
             // 
             this.lab0Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.launchButton,
-            this.clearButton,
-            this.exitButton});
+            this.clearButton});
             this.lab0Menu.Location = new System.Drawing.Point(0, 0);
             this.lab0Menu.Name = "lab0Menu";
             this.lab0Menu.Size = new System.Drawing.Size(1073, 24);
@@ -150,13 +151,6 @@ namespace Lab1
             this.clearButton.Size = new System.Drawing.Size(65, 20);
             this.clearButton.Text = "Очистка";
             this.clearButton.Click += new System.EventHandler(this.ClearButton_click);
-            // 
-            // exitButton
-            // 
-            this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(54, 20);
-            this.exitButton.Text = "Выход";
-            this.exitButton.Click += new System.EventHandler(this.ExitButton_click);
             // 
             // formulaeChart
             // 
@@ -246,7 +240,6 @@ namespace Lab1
         private System.Windows.Forms.ToolStripMenuItem launchButton;
         private System.Windows.Forms.ToolStripMenuItem clearButton;
         private System.Windows.Forms.DataVisualization.Charting.Chart formulaeChart;
-        private System.Windows.Forms.ToolStripMenuItem exitButton;
         private System.Windows.Forms.DataGridView minPointsGrid;
         private System.Windows.Forms.DataGridViewTextBoxColumn calculationNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn xCoord;
